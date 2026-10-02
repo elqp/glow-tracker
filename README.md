@@ -1,39 +1,11 @@
 # Glow Tracker
 
-Glow Tracker is a mobile-first skincare package tracker that stores data in Google Sheets through a Google Apps Script web app.
+Live mobile app: https://elqp.github.io/glow-tracker/
 
-## Local homepage
+Glow Tracker is a personal treatment journal for OneDoc JB facial packages under Elaine, Fiona, Sarah and Beulah. The mobile-first static frontend is published from this repository's `main` branch on GitHub Pages. It connects to the separately published [shared API](https://onedocjb-4hgxba3z.manus.space/_app/health), which stores packages and treatment sessions in a managed database across devices.
 
-This repo is designed to be used as a static homepage / landing page. The app entry point is `index.html`.
+**Name-only profiles are not authentication.** Anyone who can open the site or API can select, view, change or delete any of the four profiles' records. Please do not enter sensitive medical information. This is an independent journal, not OneDoc JB's official records.
 
-## Google Apps Script backend
+The previous Google Sheets version remains in this repository's Git history at commit `f9cd084`. Its external Sheet, if any, was not deleted or migrated. The new shared database starts empty.
 
-Copy the contents of `google-apps-script.gs` into a new Apps Script project and deploy it as a web app.
-
-1. Open https://script.google.com
-2. Create a new project
-3. Paste the contents of `google-apps-script.gs`
-4. Save the project
-5. In the Apps Script editor, click Deploy -> New deployment
-6. Choose type: Web app
-7. Execute as: Me
-8. Who has access: Anyone
-9. Copy the deployed web app URL
-
-Then open the app in a browser and use either:
-- the `#s=` URL parameter, for example `https://your-pages-site/#s=YOUR_DEPLOYMENT_ID`
-- or paste the full deployed URL into the app when prompted
-
-The app is also compatible with `#s=demo` to try the interface without a spreadsheet.
-
-## Data model
-
-The Apps Script creates three Sheets automatically:
-- `Profiles`
-- `Packages`
-- `Visits`
-
-## Notes
-
-- The app expects a JSON response from the script with `ok`, `profiles`, `packages`, and `visits`.
-- If the deployed script URL is missing or invalid, the app now shows the setup flow instead of failing hard.
+The compiled site files are in the repository root. The source application and backend are maintained in the Manus Glow Tracker project; updating this Pages site requires building that source with `VITE_API_BASE_URL=https://onedocjb-4hgxba3z.manus.space/api` and committing the resulting `dist/` files here. A `gh-pages` branch also contains the same initial deployment as a rollback reference.
