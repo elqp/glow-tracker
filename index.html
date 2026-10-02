@@ -78,7 +78,6 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
 (function () {
   'use strict';
 
-  // ---------- Settings ----------
   var KEY_URL = 'glow_script_url';
   var KEY_ME = 'glow_me';
   var COLOURS = [
@@ -92,12 +91,11 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
   function store(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 
-  // Read the sheet link from the address (#s=...) once, then remember it on this phone.
   (function readHash() {
     var m = /[#&]s=([^&]+)/.exec(location.hash || '');
     if (m) {
       var v = decodeURIComponent(m[1]);
-      if (v !== 'demo' && !/^https:\/\//.test(v)) v = 'https://script.google.com/macros/s/' + v + '/exec';
+      if (v !== 'demo' && !/^https?:\/\//.test(v)) v = 'https://script.google.com/macros/s/' + v + '/exec';
       store(KEY_URL, v);
       history.replaceState(null, '', location.pathname + location.search);
     }
@@ -108,8 +106,8 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     me: load(KEY_ME),
     data: null,
     screen: 'checkin',
-    mode: 'pick',        // check-in: pick | add | manage
-    confirm: null,       // name waiting for delete confirm
+    mode: 'pick',
+    confirm: null,
     pkgId: null,
     form: {},
     busy: false,
@@ -117,7 +115,6 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     toast: ''
   };
 
-  // ---------- Demo data (open the app with #s=demo to try it) ----------
   var demo = {
     profiles: ['Elaine', 'Fiona', 'Sarah', 'Beulah'],
     packages: [
@@ -130,16 +127,27 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     ]
   };
 
-  // ---------- Talking to the Google Sheet ----------
   function api(body) {
     if (S.url === 'demo') return demoApi(body);
+    if (!S.url) {
+      return Promise.reject(new Error('No Google Apps Script URL is set yet. Add your deployed script URL or use #s=demo.'));
+    }
+
     var opts = body
       ? { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }
       : { method: 'GET' };
+
     return fetch(S.url + (body ? '' : '?t=' + Date.now()), opts)
-      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (!r.ok) throw new Error('Google Apps Script request failed (' + r.status + ')');
+        return r.text().then(function (text) {
+          if (!text) return { ok: true };
+          try { return JSON.parse(text); }
+          catch (e) { throw new Error('The script returned non-JSON data. Check that your Apps Script is published as a web app and the URL is correct.'); }
+        });
+      })
       .then(function (j) {
-        if (!j.ok) throw new Error(j.error || 'Something went wrong');
+        if (!j || !j.ok) throw new Error((j && j.error) || 'Something went wrong');
         return j;
       });
   }
@@ -169,7 +177,7 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
   function refresh() {
     S.busy = true; S.error = ''; render();
     return api().then(function (d) { S.data = d; })
-      .catch(function () { S.error = "Couldn't reach the Google Sheet. Check your internet and try again."; })
+      .catch(function (e) { S.error = (e && e.message) || "Couldn't reach the Google Sheet. Check your internet and try again."; })
       .then(function () { S.busy = false; render(); });
   }
 
@@ -195,7 +203,6 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     toastTimer = setTimeout(function () { S.toast = ''; render(); }, 2600);
   }
 
-  // ---------- Helpers ----------
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -242,8 +249,8 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E2A2B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     chev: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F4749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
     plus: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
-    cal: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M12 13v5M9.5 15.5h5"/></svg>',
-    bin: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A3F35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>'
+    cal: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',
+    bin: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A3F35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 12h10l1-12"/></svg>'
   };
 
   function notices() {
@@ -252,7 +259,6 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     return h;
   }
 
-  // ---------- Screens ----------
   function screenSetup() {
     return '<div class="top" style="flex-direction:column;align-items:center;padding-top:72px;text-align:center">' +
       '<div class="eyebrow">OneDoc JB</div><h1 style="font-size:42px">Our Glow Tracker</h1></div>' +
@@ -315,7 +321,7 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
       '<h1 style="font-size:36px">Hi ' + esc(S.me) + '</h1>' +
       '<button type="button" class="linkbtn" data-act="switch">Not ' + esc(S.me) + '? Switch person</button></div>' +
       '<button type="button" class="icon-btn" data-act="refresh" aria-label="Refresh">' +
-      '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F473A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></div>' +
+      '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F473A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 4v7h-7"/></svg></button></div>' +
       '<div class="body"><div class="row" style="justify-content:space-between;align-items:baseline"><h2>My packages</h2>' +
       '<span class="muted" style="font-size:16px">' + pkgs.length + (pkgs.length === 1 ? ' package' : ' packages') + '</span></div>' + notices();
 
@@ -418,7 +424,6 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
       '</div><div class="foot"><button type="button" class="btn" data-act="savePackage"' + (S.busy ? ' disabled' : '') + '>' + (S.busy ? 'Saving…' : 'Save package') + '</button></div>';
   }
 
-  // ---------- Render ----------
   function captureInputs() {
     var el = function (id) { return document.getElementById(id); };
     if (el('newName')) S.form.name = el('newName').value;
@@ -437,7 +442,8 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     if (!S.url) h = screenSetup();
     else if (!S.data) {
       h = '<div class="body" style="justify-content:center;align-items:center;min-height:80vh;text-align:center;gap:18px">' +
-        (S.error ? notices() + '<button type="button" class="btn" data-act="refresh">Try again</button>' : '<div class="spinner" role="status" aria-label="Loading"></div><div class="muted">Loading your packages…</div>') + '</div>';
+        (S.error ? notices() + '<button type="button" class="btn" data-act="refresh">Try again</button>' : '<div class="spinner" role="status" aria-label="Loading"></div><div class="muted">Loading your packages…</div>') +
+        '</div>';
     } else if (!S.me || S.data.profiles.indexOf(S.me) < 0 || S.screen === 'checkin') {
       h = screenCheckin();
     } else if (S.screen === 'package') h = screenPackage();
@@ -449,7 +455,6 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     if (focusId && document.getElementById(focusId)) document.getElementById(focusId).focus();
   }
 
-  // ---------- Actions ----------
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-act]');
     if (!t) return;
@@ -518,7 +523,6 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     }
   });
 
-  // Enter key in the new-name box adds the profile.
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && e.target && e.target.id === 'newName') {
       var b = document.querySelector('[data-act="saveProfile"]');
@@ -526,11 +530,9 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
     }
   });
 
-  // ---------- Start ----------
-  // Auto-initialize with the provided Google Apps Script URL
   if (!S.url) {
-    store(KEY_URL, 'https://script.google.com/macros/s/AKfycbyQ-mjC7je_3Gzp_eJTca3Zp-AHQfulj7o2sLVDvFxCi3vTdNfwoKR3g0Ku8Xzbn4gdGg/exec');
-    S.url = load(KEY_URL);
+    S.url = null;
+    store(KEY_URL, null);
   }
   if (S.me) S.screen = 'home';
   render();
