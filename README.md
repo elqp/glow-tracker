@@ -2,7 +2,7 @@
 
 Live mobile app: https://elqp.github.io/glow-tracker/
 
-Glow Tracker is an installable treatment journal for One Doc JB Southkey facial packages under Elaine, Fiona, Sarah and Beulah. Each visit can use one or more sessions, and package cards show the resulting balance. Profiles can record package and visit notes, optional MYR/SGD package prices with dated reference conversions from [Frankfurter](https://frankfurter.dev/), and a shared next appointment date editable on the name-selection page. The Packages tab offers a JSON export of the selected profile's records.
+Glow Tracker is an installable treatment journal for One Doc JB Southkey facial packages under Elaine, Fiona, Sarah and Beulah. Each visit can use one or more sessions, and package cards show the resulting balance. Profiles can record package and visit notes and optional MYR/SGD package prices with dated reference conversions from [Frankfurter](https://frankfurter.dev/). Elaine and Fiona alone have editable next-appointment dates on the name-selection page; Sarah and Beulah remain name-only choices. The Packages tab offers a JSON export of the selected profile's records.
 
 The ONEDOC tab links to the [Southkey WhatsApp business account](https://wa.me/60183885168) at **+60 18 388 5168**, matching [One Doc's official outlet listing](https://www.onedoc.com.my/our-outlets/). The displayed hours were supplied for this app: **Monday–Saturday 10 am–7 pm; Sunday 10 am–5 pm**. The link opens WhatsApp but sends no message or treatment data automatically.
 

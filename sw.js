@@ -1,5 +1,5 @@
-const CACHE = "glow-tracker-314bec9dbe0467";
-const PRECACHE = ["./","./assets/index-DYGrvOvE.js","./assets/index-cvITSArT.css","./icon-192.png","./icon-512.png","./icon.svg","./index.html","./manifest.webmanifest","./manus-routes.json","./visuals/spa-entry.webp","./visuals/spa-welcome.webp"];
+const CACHE = "glow-tracker-0608eab42962e0";
+const PRECACHE = ["./","./assets/index-QLvipfhl.js","./assets/index-cvITSArT.css","./icon-192.png","./icon-512.png","./icon.svg","./index.html","./manifest.webmanifest","./manus-routes.json","./visuals/spa-entry.webp","./visuals/spa-welcome.webp"];
 const SCOPE = self.registration.scope;
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(PRECACHE.map(path => new URL(path, SCOPE).href))).then(() => self.skipWaiting()));
