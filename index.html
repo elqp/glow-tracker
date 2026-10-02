@@ -80,6 +80,7 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
 
   var KEY_URL = 'glow_script_url';
   var KEY_ME = 'glow_me';
+  var DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbybLuNh3KJSbNsiQ2hLlScMwbIvzmcjBKbrO3BBoZGUwCZt4oVOT0laeKfPms7ZFGxv/exec';
   var COLOURS = [
     { bg: '#F7DCD6', fg: '#8A3F35' },
     { bg: '#E3ECE6', fg: '#2F473A' },
@@ -102,7 +103,7 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
   })();
 
   var S = {
-    url: load(KEY_URL),
+    url: load(KEY_URL) || DEFAULT_URL,
     me: load(KEY_ME),
     data: null,
     screen: 'checkin',
@@ -130,7 +131,7 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
   function api(body) {
     if (S.url === 'demo') return demoApi(body);
     if (!S.url) {
-      return Promise.reject(new Error('No Google Apps Script URL is set yet. Add your deployed script URL or use #s=demo.'));
+      return Promise.reject(new Error('No Google Apps Script URL is set.'));
     }
 
     var opts = body
@@ -143,7 +144,7 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
         return r.text().then(function (text) {
           if (!text) return { ok: true };
           try { return JSON.parse(text); }
-          catch (e) { throw new Error('The script returned non-JSON data. Check that your Apps Script is published as a web app and the URL is correct.'); }
+          catch (e) { throw new Error('The script returned non-JSON data.'); }
         });
       })
       .then(function (j) {
@@ -531,8 +532,8 @@ textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;mi
   });
 
   if (!S.url) {
-    S.url = null;
-    store(KEY_URL, null);
+    S.url = DEFAULT_URL;
+    store(KEY_URL, DEFAULT_URL);
   }
   if (S.me) S.screen = 'home';
   render();
