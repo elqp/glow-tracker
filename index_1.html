@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBF5F2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Glow Tracker">
+<meta name="robots" content="noindex">
+<title>Our Glow Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF5F2; --card:#FFFFFF; --ink:#2E2A2B; --muted:#4F4749;
+  --sage:#4A6656; --sage-dark:#2F473A; --sage-soft:#E3ECE6; --sage-text:#3E5A4B;
+  --blush:#F1E2DD; --blush-soft:#F7E9E5; --rose:#C98C82; --clay:#8A3F35; --clay-soft:#F7DCD6;
+  --line:#E6D3CE;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Manrope',system-ui,sans-serif;font-size:18px;-webkit-text-size-adjust:100%}
+button,input,textarea{font-family:inherit;color:inherit}
+a{color:var(--sage-dark)}
+.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{padding:24px 22px 8px;display:flex;align-items:center;gap:6px}
+.eyebrow{font-size:15px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--sage)}
+h1{margin:0;font-family:'Cormorant Garamond',serif;font-weight:700;line-height:1.05}
+h2{margin:0;font-size:20px;font-weight:700}
+.body{flex:1;padding:12px 22px 24px;display:flex;flex-direction:column;gap:14px}
+.foot{position:sticky;bottom:0;padding:12px 22px calc(20px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--blush)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;border:none;border-radius:16px;background:var(--sage);color:#fff;font-size:19px;font-weight:700;cursor:pointer;text-decoration:none;padding:0 16px}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.outline{background:#fff;color:var(--sage-dark);border:2px solid var(--sage)}
+.btn.danger{background:var(--clay);color:#fff}
+.btn.danger-outline{background:#fff;color:var(--clay);border:2px solid var(--clay)}
+.btn.dashed{background:transparent;color:var(--sage-dark);border:2px dashed var(--sage);min-height:64px;border-radius:20px}
+.icon-btn{width:48px;height:48px;border-radius:24px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.card{background:var(--card);border-radius:20px;padding:18px;box-shadow:0 1px 0 rgba(46,42,43,.04),0 6px 18px rgba(163,90,80,.08)}
+.row{display:flex;align-items:center;gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.avatar{width:60px;height:60px;border-radius:30px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700}
+.person{width:100%;text-align:left;border:none;cursor:pointer;font-size:24px;font-weight:700;padding:16px 20px;border-radius:22px}
+.person .name{flex:1}
+.muted{color:var(--muted)}
+.pill{padding:5px 12px;border-radius:999px;font-size:15px;font-weight:700;white-space:nowrap;background:var(--sage-soft);color:var(--sage-dark)}
+.bar{height:10px;background:var(--blush);border-radius:999px;overflow:hidden}
+.bar > i{display:block;height:10px;border-radius:999px;background:var(--rose)}
+.pkg-head{display:block;width:100%;text-align:left;background:none;border:none;padding:0;cursor:pointer}
+.field{display:flex;flex-direction:column;gap:8px}
+.field label,.field .label{font-size:17px;font-weight:700}
+.input{height:56px;padding:0 16px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-size:18px;width:100%}
+textarea.input{height:auto;padding:12px 16px;line-height:1.45;resize:vertical;min-height:120px}
+.input:focus{outline:3px solid #B9CDBF;outline-offset:1px}
+.stepper{display:flex;align-items:center;justify-content:space-between;padding:6px;background:#fff;border-radius:14px;border:1.5px solid var(--line)}
+.stepper button{width:52px;height:52px;border-radius:12px;border:none;font-size:26px;font-weight:700;cursor:pointer}
+.stepper .minus{background:var(--blush-soft);color:var(--clay)}
+.stepper .plus{background:var(--sage-soft);color:var(--sage-dark)}
+.stepper .val{font-size:20px;font-weight:700}
+.ring{width:150px;height:150px;border-radius:75px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+.ring > div{width:120px;height:120px;border-radius:60px;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.visit{display:flex;gap:14px;background:#fff;border-radius:18px;padding:16px 18px}
+.date-chip{width:52px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--blush-soft);border-radius:12px;padding:6px 0}
+.notice{padding:14px 16px;border-radius:14px;font-size:17px;line-height:1.45}
+.notice.err{background:var(--clay-soft);color:var(--clay)}
+.notice.ok{background:var(--sage-soft);color:var(--sage-dark)}
+.center{text-align:center}
+.spinner{width:36px;height:36px;border-radius:50%;border:4px solid var(--blush);border-top-color:var(--sage);animation:spin 1s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--sage-dark);color:#fff;padding:14px 20px;border-radius:14px;font-size:17px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:10;max-width:90vw;text-align:center}
+.linkbtn{background:none;border:none;padding:8px 0;font-size:17px;font-weight:700;color:var(--sage-dark);text-decoration:underline;cursor:pointer;align-self:flex-start}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Settings ----------
+  var KEY_URL = 'glow_script_url';
+  var KEY_ME = 'glow_me';
+  var COLOURS = [
+    { bg: '#F7DCD6', fg: '#8A3F35' },
+    { bg: '#E3ECE6', fg: '#2F473A' },
+    { bg: '#E7E1F0', fg: '#4F3F6B' },
+    { bg: '#F5E6CC', fg: '#6B4A12' }
+  ];
+  var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function store(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  // Read the sheet link from the address (#s=...) once, then remember it on this phone.
+  (function readHash() {
+    var m = /[#&]s=([^&]+)/.exec(location.hash || '');
+    if (m) {
+      var v = decodeURIComponent(m[1]);
+      if (v !== 'demo' && !/^https:\/\//.test(v)) v = 'https://script.google.com/macros/s/' + v + '/exec';
+      store(KEY_URL, v);
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  })();
+
+  var S = {
+    url: load(KEY_URL),
+    me: load(KEY_ME),
+    data: null,
+    screen: 'checkin',
+    mode: 'pick',        // check-in: pick | add | manage
+    confirm: null,       // name waiting for delete confirm
+    pkgId: null,
+    form: {},
+    busy: false,
+    error: '',
+    toast: ''
+  };
+
+  // ---------- Demo data (open the app with #s=demo to try it) ----------
+  var demo = {
+    profiles: ['Elaine', 'Fiona', 'Sarah', 'Beulah'],
+    packages: [
+      { id: 'P1', treatment: 'Hydrating Facial', owner: 'Elaine', total: 10, price: 1800, bought: '2026-06', usedBefore: 5 },
+      { id: 'P2', treatment: 'Acne Clear Facial', owner: 'Elaine', total: 8, price: 960, bought: '2026-08', usedBefore: 2 },
+      { id: 'P3', treatment: 'Brightening Facial', owner: 'Fiona', total: 6, price: 1080, bought: '2026-07', usedBefore: 3 }
+    ],
+    visits: [
+      { date: '2026-09-12', packageId: 'P1', person: 'Elaine', sessions: 1, notes: 'Skin less dry around cheeks.' }
+    ]
+  };
+
+  // ---------- Talking to the Google Sheet ----------
+  function api(body) {
+    if (S.url === 'demo') return demoApi(body);
+    var opts = body
+      ? { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }
+      : { method: 'GET' };
+    return fetch(S.url + (body ? '' : '?t=' + Date.now()), opts)
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j.ok) throw new Error(j.error || 'Something went wrong');
+        return j;
+      });
+  }
+
+  function demoApi(b) {
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        try {
+          if (b && b.action === 'addProfile') {
+            if (!b.name) throw new Error('Please type a name');
+            demo.profiles.push(b.name);
+          } else if (b && b.action === 'deleteProfile') {
+            demo.profiles = demo.profiles.filter(function (n) { return n !== b.name; });
+            demo.packages = demo.packages.filter(function (p) { return p.owner !== b.name; });
+            demo.visits = demo.visits.filter(function (v) { return v.person !== b.name; });
+          } else if (b && b.action === 'addPackage') {
+            demo.packages.push({ id: 'P' + (demo.packages.length + 10), treatment: b.treatment, owner: b.owner, total: b.total, price: b.price, bought: b.bought, usedBefore: b.usedBefore });
+          } else if (b && b.action === 'logVisit') {
+            demo.visits.push({ date: b.date, packageId: b.packageId, person: b.person, sessions: b.sessions, notes: b.notes });
+          }
+          resolve(JSON.parse(JSON.stringify({ ok: true, profiles: demo.profiles, packages: demo.packages, visits: demo.visits })));
+        } catch (e) { reject(e); }
+      }, 250);
+    });
+  }
+
+  function refresh() {
+    S.busy = true; S.error = ''; render();
+    return api().then(function (d) { S.data = d; })
+      .catch(function () { S.error = "Couldn't reach the Google Sheet. Check your internet and try again."; })
+      .then(function () { S.busy = false; render(); });
+  }
+
+  function send(body, okMsg, after) {
+    if (S.busy) return;
+    S.busy = true; S.error = ''; render();
+    api(body).then(function (d) {
+      S.data = d; S.busy = false;
+      if (after) after();
+      if (okMsg) showToast(okMsg);
+      render();
+    }).catch(function (e) {
+      S.busy = false;
+      S.error = (e && e.message && e.message !== 'Failed to fetch') ? e.message : "Couldn't save. Check your internet and try again.";
+      render();
+    });
+  }
+
+  var toastTimer;
+  function showToast(msg) {
+    S.toast = msg;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { S.toast = ''; render(); }, 2600);
+  }
+
+  // ---------- Helpers ----------
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function rm(n) { return 'RM ' + Number(n || 0).toLocaleString('en-MY', { maximumFractionDigits: 2 }); }
+  function monthLabel(ym) {
+    var m = /^(\d{4})-(\d{2})/.exec(ym || '');
+    return m ? MONTHS[parseInt(m[2], 10) - 1] + ' ' + m[1] : (ym || '');
+  }
+  function today() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function colourFor(name) {
+    var list = (S.data && S.data.profiles) || [];
+    var i = list.indexOf(name);
+    return COLOURS[(i < 0 ? 0 : i) % COLOURS.length];
+  }
+  function visitsFor(id) {
+    return ((S.data && S.data.visits) || []).filter(function (v) { return v.packageId === id; });
+  }
+  function enrich(p) {
+    var used = p.usedBefore + visitsFor(p.id).reduce(function (s, v) { return s + (v.sessions || 1); }, 0);
+    used = Math.min(used, p.total);
+    return Object.assign({}, p, { used: used, left: Math.max(0, p.total - used), pct: p.total ? Math.round(used / p.total * 100) : 0 });
+  }
+  function myPackages() {
+    return ((S.data && S.data.packages) || []).filter(function (p) { return p.owner === S.me; }).map(enrich);
+  }
+  function findPkg(id) {
+    var p = ((S.data && S.data.packages) || []).filter(function (x) { return x.id === id; })[0];
+    return p ? enrich(p) : null;
+  }
+  function go(screen, extra) {
+    S.screen = screen; S.error = '';
+    if (extra) Object.keys(extra).forEach(function (k) { S[k] = extra[k]; });
+    render();
+    window.scrollTo(0, 0);
+  }
+
+  var ICON = {
+    back: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E2A2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    close: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E2A2B" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    chev: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4F4749" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
+    plus: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>',
+    cal: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M12 13v5M9.5 15.5h5"/></svg>',
+    bin: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8A3F35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>'
+  };
+
+  function notices() {
+    var h = '';
+    if (S.error) h += '<div class="notice err" role="alert">' + esc(S.error) + '</div>';
+    return h;
+  }
+
+  // ---------- Screens ----------
+  function screenSetup() {
+    return '<div class="top" style="flex-direction:column;align-items:center;padding-top:72px;text-align:center">' +
+      '<div class="eyebrow">OneDoc JB</div><h1 style="font-size:42px">Our Glow Tracker</h1></div>' +
+      '<div class="body" style="text-align:center">' +
+      '<div class="card"><h2 style="margin-bottom:10px">Almost there</h2>' +
+      '<p class="muted" style="margin:0;line-height:1.5">Please open this app using the <b>special link</b> Elaine sent you. It connects the app to your shared Google Sheet.</p></div>' +
+      '<a class="btn outline" href="#s=demo" onclick="setTimeout(function(){location.reload()},50)">Try the demo instead</a></div>';
+  }
+
+  function screenCheckin() {
+    var list = S.data.profiles;
+    var managing = S.mode === 'manage';
+    var h = '<div class="top" style="flex-direction:column;align-items:center;padding-top:48px;text-align:center">' +
+      '<div class="eyebrow">OneDoc JB</div><h1 style="font-size:42px">Our Glow Tracker</h1></div>' +
+      '<div class="body"><h2 class="center" style="font-size:22px">' + (managing ? 'Which profile to delete?' : 'Who is checking in?') + '</h2>' + notices();
+
+    if (!list.length) h += '<div class="notice ok">No profiles yet. Tap <b>Add profile</b> to start.</div>';
+
+    list.forEach(function (name) {
+      var c = colourFor(name);
+      var av = '<span class="avatar" style="background:' + c.bg + ';color:' + c.fg + '">' + esc(name.charAt(0).toUpperCase()) + '</span>';
+      if (!managing) {
+        h += '<button type="button" class="person card row" data-act="pick" data-name="' + esc(name) + '">' + av + '<span class="name">' + esc(name) + '</span>' + ICON.chev + '</button>';
+      } else if (S.confirm === name) {
+        h += '<div class="card" style="border:2px solid var(--clay);display:flex;flex-direction:column;gap:14px">' +
+          '<div style="font-size:20px;font-weight:700">Delete ' + esc(name) + '?</div>' +
+          '<div class="muted" style="line-height:1.45">Their packages and visit notes will be removed too. This can\'t be undone.</div>' +
+          '<div class="grid2"><button type="button" class="btn outline" data-act="keep">Keep</button>' +
+          '<button type="button" class="btn danger" data-act="reallyDelete" data-name="' + esc(name) + '"' + (S.busy ? ' disabled' : '') + '>Yes, delete</button></div></div>';
+      } else {
+        h += '<div class="card row" style="border:2px dashed var(--line);box-shadow:none;padding:16px 16px 16px 20px">' + av +
+          '<span style="flex:1;font-size:24px;font-weight:700">' + esc(name) + '</span>' +
+          '<button type="button" class="btn danger-outline" style="width:auto;min-height:52px;font-size:17px;border:none;background:var(--clay-soft)" data-act="askDelete" data-name="' + esc(name) + '" aria-label="Delete ' + esc(name) + '">' + ICON.bin + 'Delete</button></div>';
+      }
+    });
+
+    if (S.mode === 'add') {
+      h += '<div class="card" style="border:2px solid var(--sage);display:flex;flex-direction:column;gap:12px">' +
+        '<label for="newName" style="font-size:20px;font-weight:700">New profile name</label>' +
+        '<input id="newName" class="input" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Mary" value="' + esc(S.form.name || '') + '">' +
+        '<div class="grid2"><button type="button" class="btn outline" data-act="cancel">Cancel</button>' +
+        '<button type="button" class="btn" data-act="saveProfile"' + (S.busy ? ' disabled' : '') + '>' + (S.busy ? 'Saving…' : 'Add') + '</button></div></div>';
+    }
+    h += '</div>';
+
+    if (S.mode === 'pick') {
+      h += '<div class="foot"><div class="grid2"><button type="button" class="btn" data-act="startAdd">' + ICON.plus + 'Add profile</button>' +
+        '<button type="button" class="btn danger-outline" data-act="startManage">Delete profile</button></div></div>';
+    } else if (managing) {
+      h += '<div class="foot"><button type="button" class="btn" data-act="cancel">Done</button></div>';
+    }
+    return h;
+  }
+
+  function screenDashboard() {
+    var pkgs = myPackages();
+    var h = '<div class="top" style="justify-content:space-between;align-items:flex-start;padding-top:28px">' +
+      '<div style="display:flex;flex-direction:column;gap:2px"><div class="eyebrow">OneDoc JB</div>' +
+      '<h1 style="font-size:36px">Hi ' + esc(S.me) + '</h1>' +
+      '<button type="button" class="linkbtn" data-act="switch">Not ' + esc(S.me) + '? Switch person</button></div>' +
+      '<button type="button" class="icon-btn" data-act="refresh" aria-label="Refresh">' +
+      '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2F473A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></div>' +
+      '<div class="body"><div class="row" style="justify-content:space-between;align-items:baseline"><h2>My packages</h2>' +
+      '<span class="muted" style="font-size:16px">' + pkgs.length + (pkgs.length === 1 ? ' package' : ' packages') + '</span></div>' + notices();
+
+    if (!pkgs.length) h += '<div class="notice ok">No packages yet. Tap <b>Add a package</b> below.</div>';
+
+    pkgs.forEach(function (p) {
+      h += '<div class="card" style="display:flex;flex-direction:column;gap:14px">' +
+        '<button type="button" class="pkg-head" data-act="openPkg" data-id="' + esc(p.id) + '" aria-label="Open ' + esc(p.treatment) + ' details">' +
+        '<div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px"><div style="display:flex;flex-direction:column;gap:3px">' +
+        '<div style="font-size:20px;font-weight:700">' + esc(p.treatment) + '</div>' +
+        '<div class="muted" style="font-size:16px">Bought ' + esc(monthLabel(p.bought)) + '</div></div>' +
+        '<span class="pill">' + rm(p.price) + '</span></div>' +
+        '<div style="display:flex;flex-direction:column;gap:6px;margin-top:12px"><div class="bar"><i style="width:' + p.pct + '%"></i></div>' +
+        '<div class="row" style="justify-content:space-between;font-size:16px"><b>' + p.used + ' of ' + p.total + ' used</b>' +
+        '<b style="color:var(--sage)">' + p.left + ' left</b></div></div></button>' +
+        (p.left > 0
+          ? '<button type="button" class="btn" style="min-height:52px;font-size:18px" data-act="openLog" data-id="' + esc(p.id) + '">' + ICON.cal + 'Log a visit</button>'
+          : '<div class="notice ok center" style="font-weight:700">All sessions used</div>') +
+        '</div>';
+    });
+
+    h += '<button type="button" class="btn dashed" data-act="openAdd">' + ICON.plus + 'Add a package</button></div>';
+    return h;
+  }
+
+  function screenPackage() {
+    var p = findPkg(S.pkgId);
+    if (!p) return screenDashboard();
+    var vs = visitsFor(p.id).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    var n = p.usedBefore;
+    var items = vs.map(function (v) {
+      var from = n + 1; n += v.sessions || 1;
+      return Object.assign({}, v, { label: n > from ? 'Sessions ' + from + '–' + n : 'Session ' + from });
+    }).reverse();
+    var per = p.total ? Math.round(p.price / p.total) : 0;
+
+    var h = '<div class="top" style="justify-content:space-between">' +
+      '<button type="button" class="icon-btn" data-act="home" aria-label="Back">' + ICON.back + '</button>' +
+      '<div class="eyebrow">' + esc(S.me) + "'s package</div><span style=\"width:48px\"></span></div>" +
+      '<div class="body">' + notices() +
+      '<div class="ring" style="background:conic-gradient(var(--rose) 0% ' + p.pct + '%, var(--blush) ' + p.pct + '% 100%)"><div>' +
+      '<div style="font-family:\'Cormorant Garamond\',serif;font-size:48px;font-weight:700;line-height:1">' + p.left + '</div>' +
+      '<div class="muted" style="font-size:16px;font-weight:600">' + (p.left === 1 ? 'session left' : 'sessions left') + '</div></div></div>' +
+      '<div class="center"><h1 style="font-size:32px">' + esc(p.treatment) + '</h1>' +
+      '<div class="muted">' + p.used + ' of ' + p.total + ' used · bought ' + esc(monthLabel(p.bought)) + '</div></div>' +
+      '<div class="card" style="display:flex;flex-direction:column;gap:10px">' +
+      '<div class="row" style="justify-content:space-between"><h2 style="font-size:18px">Payment</h2><span class="pill">Paid in full</span></div>' +
+      '<div class="row" style="justify-content:space-between"><span class="muted">Package price</span><b style="font-size:20px">' + rm(p.price) + '</b></div>' +
+      '<div class="row" style="justify-content:space-between"><span class="muted">Cost per session</span><b style="font-size:20px;color:var(--sage-dark)">' + rm(per) + '</b></div></div>' +
+      '<div class="row" style="justify-content:space-between;align-items:baseline;padding-top:4px"><h2>Visit log</h2>' +
+      '<span class="muted" style="font-size:16px">' + items.length + (items.length === 1 ? ' visit' : ' visits') + '</span></div>';
+
+    if (!items.length) h += '<div class="notice ok">No visits logged yet.</div>';
+    items.forEach(function (v) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v.date) || [];
+      h += '<div class="visit"><div class="date-chip"><div style="font-family:\'Cormorant Garamond\',serif;font-size:26px;font-weight:700;line-height:1">' + esc(m[3] || '') + '</div>' +
+        '<div style="font-size:14px;font-weight:700;text-transform:uppercase;color:var(--clay)">' + esc(m[2] ? MONTHS[parseInt(m[2], 10) - 1] : '') + '</div></div>' +
+        '<div style="display:flex;flex-direction:column;gap:4px;min-width:0"><div style="font-weight:700">' + esc(v.label) + '</div>' +
+        (v.notes ? '<div class="muted" style="font-size:17px;line-height:1.45;word-wrap:break-word">' + esc(v.notes) + '</div>' : '') + '</div></div>';
+    });
+    h += '</div>';
+    if (p.left > 0) h += '<div class="foot"><button type="button" class="btn" data-act="openLog" data-id="' + esc(p.id) + '">Log session ' + (p.used + 1) + '</button></div>';
+    return h;
+  }
+
+  function stepper(id, value, label) {
+    return '<div class="stepper"><button type="button" class="minus" data-act="step" data-field="' + id + '" data-d="-1" aria-label="Less">−</button>' +
+      '<div class="val" aria-live="polite">' + label + '</div>' +
+      '<button type="button" class="plus" data-act="step" data-field="' + id + '" data-d="1" aria-label="More">+</button></div>';
+  }
+
+  function screenLog() {
+    var p = findPkg(S.pkgId);
+    if (!p) return screenDashboard();
+    var f = S.form;
+    return '<div class="top"><button type="button" class="icon-btn" data-act="backFromForm" aria-label="Close">' + ICON.close + '</button>' +
+      '<h1 style="font-size:30px">Log a visit</h1></div>' +
+      '<div class="body">' + notices() +
+      '<div style="padding:18px 20px;background:var(--sage-soft);border-radius:20px;display:flex;flex-direction:column;gap:4px">' +
+      '<div style="font-size:16px;font-weight:600;color:var(--sage-text)">Package</div>' +
+      '<div style="font-size:22px;font-weight:700">' + esc(p.treatment) + '</div>' +
+      '<div style="color:var(--sage-dark)">' + p.used + ' of ' + p.total + ' used · ' + p.left + ' left</div></div>' +
+      '<div class="field"><label for="vDate">Date</label><input id="vDate" class="input" type="date" value="' + esc(f.date) + '"></div>' +
+      '<div class="field"><div class="label">Sessions used</div>' + stepper('sessions', f.sessions, f.sessions + (f.sessions === 1 ? ' session' : ' sessions')) + '</div>' +
+      '<div class="field"><label for="vNotes">Notes</label><textarea id="vNotes" class="input" maxlength="500" placeholder="How did your skin feel? Any reactions, add-ons or next booking?">' + esc(f.notes || '') + '</textarea></div>' +
+      '</div><div class="foot"><button type="button" class="btn" data-act="saveVisit"' + (S.busy ? ' disabled' : '') + '>' + (S.busy ? 'Saving…' : 'Save visit') + '</button></div>';
+  }
+
+  function screenAdd() {
+    var f = S.form;
+    return '<div class="top"><button type="button" class="icon-btn" data-act="home" aria-label="Close">' + ICON.close + '</button>' +
+      '<h1 style="font-size:30px">Add a package</h1></div>' +
+      '<div class="body" style="gap:20px">' + notices() +
+      '<div class="field"><label for="aName">Treatment name</label><input id="aName" class="input" type="text" maxlength="60" autocomplete="off" placeholder="e.g. Hydrating Facial" value="' + esc(f.treatment || '') + '"></div>' +
+      '<div class="field"><div class="label">Total sessions in package</div>' + stepper('total', f.total, f.total + ' sessions') + '</div>' +
+      '<div class="field"><div class="label">Sessions already used</div>' + stepper('usedBefore', f.usedBefore, f.usedBefore + (f.usedBefore === 1 ? ' session' : ' sessions')) +
+      '<div class="muted" style="font-size:16px">Leave at 0 for a brand-new package.</div></div>' +
+      '<div class="field"><label for="aPrice">Price paid (RM)</label><input id="aPrice" class="input" type="number" inputmode="decimal" min="0" placeholder="0" value="' + esc(f.price || '') + '"></div>' +
+      '<div class="field"><label for="aBought">Month bought</label><input id="aBought" class="input" type="month" value="' + esc(f.bought) + '"></div>' +
+      '</div><div class="foot"><button type="button" class="btn" data-act="savePackage"' + (S.busy ? ' disabled' : '') + '>' + (S.busy ? 'Saving…' : 'Save package') + '</button></div>';
+  }
+
+  // ---------- Render ----------
+  function captureInputs() {
+    var el = function (id) { return document.getElementById(id); };
+    if (el('newName')) S.form.name = el('newName').value;
+    if (el('vDate')) S.form.date = el('vDate').value;
+    if (el('vNotes')) S.form.notes = el('vNotes').value;
+    if (el('aName')) S.form.treatment = el('aName').value;
+    if (el('aPrice')) S.form.price = el('aPrice').value;
+    if (el('aBought')) S.form.bought = el('aBought').value;
+  }
+
+  function render() {
+    var app = document.getElementById('app');
+    var focusId = document.activeElement && document.activeElement.id;
+    captureInputs();
+    var h;
+    if (!S.url) h = screenSetup();
+    else if (!S.data) {
+      h = '<div class="body" style="justify-content:center;align-items:center;min-height:80vh;text-align:center;gap:18px">' +
+        (S.error ? notices() + '<button type="button" class="btn" data-act="refresh">Try again</button>' : '<div class="spinner" role="status" aria-label="Loading"></div><div class="muted">Loading your packages…</div>') + '</div>';
+    } else if (!S.me || S.data.profiles.indexOf(S.me) < 0 || S.screen === 'checkin') {
+      h = screenCheckin();
+    } else if (S.screen === 'package') h = screenPackage();
+    else if (S.screen === 'log') h = screenLog();
+    else if (S.screen === 'add') h = screenAdd();
+    else h = screenDashboard();
+    if (S.toast) h += '<div class="toast" role="status">' + esc(S.toast) + '</div>';
+    app.innerHTML = h;
+    if (focusId && document.getElementById(focusId)) document.getElementById(focusId).focus();
+  }
+
+  // ---------- Actions ----------
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-act]');
+    if (!t) return;
+    var act = t.getAttribute('data-act');
+    var name = t.getAttribute('data-name');
+    var id = t.getAttribute('data-id');
+    captureInputs();
+
+    switch (act) {
+      case 'pick':
+        S.me = name; store(KEY_ME, name); go('home'); break;
+      case 'switch':
+        S.me = null; store(KEY_ME, null); go('checkin', { mode: 'pick', confirm: null }); break;
+      case 'startAdd': S.form = { name: '' }; go('checkin', { mode: 'add' });
+        setTimeout(function () { var i = document.getElementById('newName'); if (i) i.focus(); }, 30); break;
+      case 'startManage': go('checkin', { mode: 'manage', confirm: null }); break;
+      case 'cancel': go('checkin', { mode: 'pick', confirm: null }); break;
+      case 'keep': S.confirm = null; render(); break;
+      case 'askDelete': S.confirm = name; render(); break;
+      case 'saveProfile':
+        var nm = (S.form.name || '').trim();
+        if (!nm) { S.error = 'Please type a name.'; render(); break; }
+        send({ action: 'addProfile', name: nm }, nm + ' added', function () { S.mode = 'pick'; S.form = {}; });
+        break;
+      case 'reallyDelete':
+        send({ action: 'deleteProfile', name: name }, name + ' deleted', function () {
+          S.confirm = null;
+          if (S.me === name) { S.me = null; store(KEY_ME, null); }
+        });
+        break;
+      case 'refresh': refresh(); break;
+      case 'home': go('home'); break;
+      case 'openPkg': go('package', { pkgId: id }); break;
+      case 'openLog':
+        S.form = { date: today(), sessions: 1, notes: '' };
+        S.backTo = S.screen === 'package' ? 'package' : 'home';
+        go('log', { pkgId: id }); break;
+      case 'backFromForm': go(S.backTo || 'home'); break;
+      case 'openAdd':
+        S.form = { treatment: '', total: 10, usedBefore: 0, price: '', bought: today().slice(0, 7) };
+        go('add'); break;
+      case 'step':
+        var field = t.getAttribute('data-field');
+        var d = parseInt(t.getAttribute('data-d'), 10);
+        if (field === 'sessions') {
+          var p = findPkg(S.pkgId);
+          S.form.sessions = Math.max(1, Math.min(Math.min(5, p ? p.left : 5), S.form.sessions + d));
+        } else if (field === 'total') {
+          S.form.total = Math.max(1, Math.min(50, S.form.total + d));
+          S.form.usedBefore = Math.min(S.form.usedBefore, S.form.total);
+        } else if (field === 'usedBefore') {
+          S.form.usedBefore = Math.max(0, Math.min(S.form.total, S.form.usedBefore + d));
+        }
+        render(); break;
+      case 'saveVisit':
+        if (!S.form.date) { S.error = 'Please pick the date.'; render(); break; }
+        send({ action: 'logVisit', packageId: S.pkgId, person: S.me, date: S.form.date, sessions: S.form.sessions, notes: (S.form.notes || '').trim() },
+          'Visit saved', function () { S.screen = 'package'; });
+        break;
+      case 'savePackage':
+        var f = S.form;
+        if (!(f.treatment || '').trim()) { S.error = 'Please type the treatment name.'; render(); break; }
+        send({ action: 'addPackage', owner: S.me, treatment: f.treatment.trim(), total: f.total, usedBefore: f.usedBefore, price: Number(f.price) || 0, bought: f.bought || today().slice(0, 7) },
+          'Package added', function () { S.screen = 'home'; });
+        break;
+    }
+  });
+
+  // Enter key in the new-name box adds the profile.
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target && e.target.id === 'newName') {
+      var b = document.querySelector('[data-act="saveProfile"]');
+      if (b) b.click();
+    }
+  });
+
+  // ---------- Start ----------
+  if (S.me) S.screen = 'home';
+  render();
+  if (S.url) refresh();
+})();
+</script>
+</body>
+</html>
